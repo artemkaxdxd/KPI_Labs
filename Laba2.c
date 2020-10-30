@@ -1,7 +1,7 @@
 ﻿#include <stdio.h>
 #include <math.h>
 
-double way1(int n) { // Варіант 1
+double way1(int n) { // Option 1
 	double S = 0;
 	int counter = 0;
 	double power = 1;
@@ -9,20 +9,20 @@ double way1(int n) { // Варіант 1
 		power *= 3;
 		counter++;
 		double sum = power * log(i + 1);
-		counter += 3; // * + log + (+) = 3 operations
+		counter += 3;
 		double res2 = 1;
 		for (int j = 1; j <= i; j++) {
 			res2 *= (2 * j + 1);
-			counter += 3; // * + ((*) + (+)) = 3 operations
+			counter += 3;
 		}
 		S += (sum / res2);
-		counter += 2; // (+) + / = 2 operations
+		counter += 2;
 	}
 	printf("Operations in way1 : %d \n", counter);
 	return S;
 }
 
-double way2(int n) { // Варіант 2
+double way2(int n) { // Option 2
 	double sum = 0;
 	double cache1 = 1;
 	int counter = 0;
@@ -31,11 +31,11 @@ double way2(int n) { // Варіант 2
 		power *= 3;
 		counter++;
 		double res1 = power * log(i + 1);
-		counter += 3; // * + log + (+)= 3 operations
+		counter += 3;
 		cache1 *= (2 * i + 1);
-		counter += 3; // * + ((*) + (+)) = 3 operations
+		counter += 3;
 		sum += res1 / cache1;
-		counter += 2; // (+) + / = 2 operations
+		counter += 2;
 	}
 	printf("Operations in way2 : %d \n", counter);
 	return sum;
