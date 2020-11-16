@@ -2,7 +2,7 @@
 
 ## First Lab work
 **For a given x, find out what range it fits in and evaluate the corresponding equation.**
-[equation]: (https://github.com/artemkaxdxd/ASD_Labs/blob/main/Lab1/Lab1_equation.png)
+![equation](https://github.com/artemkaxdxd/ASD_Labs/blob/main/Lab1/Lab1_equation.png)
 
 There are two options for this lab (**Laba1_2.c, Laba1_2.c**):
 
@@ -11,7 +11,7 @@ There are two options for this lab (**Laba1_2.c, Laba1_2.c**):
 
 ## Second Lab work
 **For a given n, solve the equation.**
-[equation2]: (https://github.com/artemkaxdxd/ASD_Labs/blob/main/Lab2/Lab2_equation.png)
+![equation2](https://github.com/artemkaxdxd/ASD_Labs/blob/main/Lab2/Lab2_equation.png)
 
 There are two options for this lab (**way1, way2**):
 
@@ -20,4 +20,4 @@ There are two options for this lab (**way1, way2**):
 
 ## Third Lab work
 **Fill out the 2D Array in a way, that is illustrated on the given diagram.**
-[diagram]: https://github.com/artemkaxdxd/ASD_Labs/blob/main/Lab3/Lab3_diagram.png
+![diagram](https://github.com/artemkaxdxd/ASD_Labs/blob/main/Lab3/Lab3_diagram.png)
