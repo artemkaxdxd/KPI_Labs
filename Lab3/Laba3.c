@@ -3,17 +3,19 @@
 #include <time.h>
 #include <windows.h>
 
-#define START1_I 11
-#define START1_J 80
-#define END1_I 0
-#define END1_J 80
+#define ST_1I 11
+#define ST_1J 80
+#define END_1I 0
+#define END_1J 80
 
-#define START2_I 12
-#define START2_J -1
-#define END2_I 23
-#define END2_J 0
+#define ST_2I 12
+#define ST_2J -1
+#define END_2I 23
+#define END_2J 0
 
-void gotoxy(int x, int y) {
+int mtx[24][80] = { 0 };
+
+void gotoXY(int x, int y) {
     COORD coord;
     coord.X = x;
     coord.Y = y;
@@ -21,16 +23,16 @@ void gotoxy(int x, int y) {
 }
 
 void printMtx(int i, int j) {
-    gotoxy(j, i);
-    putchar('X');
+    gotoXY(j, i);
+    putchar('#');
 }
 
 int main() {
-    int cur_i1 = START1_I;
-    int cur_j1 = START1_J;
-    int cur_i2 = START2_I;
-    int cur_j2 = START2_J;
-    while ((cur_i1 != END1_I || cur_j1 != END1_J) && (cur_i2 != END2_I || cur_j2 != END2_J)) {
+    int cur_i1 = ST_1I;
+    int cur_j1 = ST_1J;
+    int cur_i2 = ST_2I;
+    int cur_j2 = ST_2J;
+    while ((cur_i1 != END_1I || cur_j1 != END_1J) && (cur_i2 != END_2I || cur_j2 != END_2J)) {
         if (cur_i1 % 2 != 0) {
             if (cur_j1 != 0) {
                 cur_j1--;
@@ -51,6 +53,8 @@ int main() {
                 cur_i2++;
             }
         }
+        mtx[cur_i1][cur_j1] = 1;
+        mtx[cur_i2][cur_j2] = 1;
         printMtx(cur_i1, cur_j1);
         printMtx(cur_i2, cur_j2);
         Sleep(7);
