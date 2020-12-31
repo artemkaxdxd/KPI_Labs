@@ -11,7 +11,9 @@ int main() {
     for (int i = 0; i < n - 2; i++) {
         float sum = 0;
         power *= (1 - X[i]);
-        sum += power;
+        for(int k = 1; k <= n-2; k++){
+            sum += power;
+        }
         if (i + 1 < n) {
             Y[i + 1] = Y[i] * sum;
             X[i + 1] = X[i] * sum;
