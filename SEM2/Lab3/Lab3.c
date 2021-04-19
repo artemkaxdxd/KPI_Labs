@@ -43,7 +43,13 @@ void drawNodes(int dx, int dy, int dtx, int nx[], int ny[], int hdc, int BPen, i
 
 void arrow(int px, int py, int dx, int dy, HDC hdc) {
     int lx, ly = py, rx = px, ry;
-    if (dx == 0) return;
+    if (dx == 0 && dy == 0) return;
+    if (dx == 0) {
+        ly = py + (15 * dy / abs(dy));
+        ry = ly;
+        lx = px - 15;
+        rx = px + 15;
+    }
     else lx = px + (dx / abs(dx)) * 15;
     if (dy == 0) {
         ly = py - 15;
