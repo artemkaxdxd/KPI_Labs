@@ -270,20 +270,20 @@ void powMatrix(HDC hdc, int A[N][N], int startA[N][N], int reachA[N][N], int len
                     connA[j][i] = 0;
                 }
                 //print reach matrix
-                //sprintf_s(text, 2, "%d", reachA[i][j]);
-                //TextOutA(hdc, 5 + 25 * j, 400 + 20 * i, text, 1);
+                sprintf_s(text, 2, "%d", reachA[i][j]);
+                TextOutA(hdc, 5 + 25 * j, 400 + 20 * i, text, 1);
 
 
             }
         }
 
         //print connection matrix
-        /*for (int i = 0; i < N; i++) {
+        for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 sprintf_s(text, 2, "%d", connA[i][j]);
                 TextOutA(hdc, 350 + 25 * j, 400 + 20 * i, text, 1);
             }
-        }*/
+        }
         countery = 0;
         //find components
         for (int count = 0; count < N; count++) {
@@ -303,8 +303,8 @@ void powMatrix(HDC hdc, int A[N][N], int startA[N][N], int reachA[N][N], int len
                     }
                 }
             }
-            for (int i = 0; i <= 9; i++) {
-                if (components[countery][i]) countery++;//IT COULD BE, or even SHOULD BE OPTIMIZED
+            for (int i = 0; i < N; i++) {
+                if (components[countery][i]) countery++;
             }
         }
         //draw cond graph
@@ -436,11 +436,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) {
         //Task 4
         //generateMtx(A, (1.0 - 0 * 0.005 - 3 * 0.005 - 0.27));
         //simMatrix(A, B);
-        ////printEdge(A, hdc, 600, 1);//sub-pow-nodes
+        ////printEdge(A, hdc, 600, 1); //sub-pow-nodes
         //powMatrix(hdc, A, A, diagonalA, N - 1);
 
         
         //Task 2 + 3
+        
         generateMtx(A, (1.0 - 0 * 0.01 - 3 * 0.01 - 0.3));
         simMatrix(A, B);
         printEdge(A, hdc, 600,1);
