@@ -100,8 +100,8 @@ void generateMtx(int* matrix[N][N], float k) {
 //sub-edges
 void printEdge(int B[N][N], HDC hdc, int height, int type) {
     char text[9];
-    int counter[N] = { 0,0,0,0,0,0,0,0,0,0 };
-    int counter2[N] = { 0,0,0,0,0,0,0,0,0,0 };
+    int counter[N] = { 0 };
+    int counter2[N] = { 0 };
     int checker = -1, flag = 1, isolatedFlag = 0;
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
@@ -348,9 +348,8 @@ void drawNodes(int dx, int dy, int dtx, int nx[], int ny[], int hdc, int BPen, i
     }
 }
 
-void paintLine(int matrix[N][N], HDC hdc, int dx, int dy, int nx[], int ny[], int drawArrows) {
+void paintLine(int matrix[N][N], HDC hdc, int dx, int dy, int nx[], int ny[], float koef, int oriented) {
     int  radius = 16, divine = 1, xDif, yDif;
-    float koef = 1.0 - 0 * 0.02 - 3 * 0.005 - 0.25;
     for (int start = 0; start < N; start++) {
         for (int end = 0; end < N; end++) {
             if (matrix[start][end] == 1) {
@@ -365,18 +364,21 @@ void paintLine(int matrix[N][N], HDC hdc, int dx, int dy, int nx[], int ny[], in
                     LineTo(hdc, nx[end] + 40, ny[end] + 40);
                     LineTo(hdc, nx[end] + 10, ny[end] + 40);
                     LineTo(hdc, nx[end], ny[end]);
-                    if (drawArrows) arrow(nx[end] + 2, ny[end] + 13, 2, 13, hdc);
+                    if (oriented) arrow(nx[end] + 2, ny[end] + 13, 2, 13, hdc);
                 }
                 else if (matrix[start][end] == 1 && matrix[end][start] == 1) {
                     MoveToEx(hdc, nx[start], ny[start], NULL);
-                    LineTo(hdc, nx[end] + xDif / 2 + (20 * divine), ny[end] + yDif / 2 + (20 * divine));
+                    if (oriented) LineTo(hdc, nx[end] + xDif / 2 + (20 * divine), ny[end] + yDif / 2 + (20 * divine));
                     LineTo(hdc, nx[end], ny[end]);
-                    if (drawArrows) arrow(nx[end] + dx, ny[end] + dy, dx, dy, hdc);
+                    if (oriented) arrow(nx[end] + dx, ny[end] + dy, dx, dy, hdc);
                     divine = -divine;
                 }
                 else {
                     MoveToEx(hdc, nx[start], ny[start], NULL);
-                    if (yDif == 0 && abs(xDif) > 300 && end <= 3) {
+                    if ((ny[start] == ny[end]) && abs(nx[start] - nx[end]) > 200) {
+                        LineTo(hdc, nx[end] + xDif / 2, ny[end] - 25);
+                    }
+                    else if (yDif == 0 && abs(xDif) > 300 && end <= 3) {
                         LineTo(hdc, nx[end] + xDif / 2, ny[end] - 35);
                         dx = xDif / 2 / koef;
                         dy = (yDif - 35) / koef;
@@ -387,7 +389,7 @@ void paintLine(int matrix[N][N], HDC hdc, int dx, int dy, int nx[], int ny[], in
                         dy = yDif / koef;
                     }
                     LineTo(hdc, nx[end], ny[end]);
-                    if (drawArrows) arrow(nx[end] + dx, ny[end] + dy, dx, dy, hdc);
+                    if (oriented) arrow(nx[end] + dx, ny[end] + dy, dx, dy, hdc);
                 }
             }
         }
@@ -409,7 +411,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) {
         int xPos[10];
         int yPos[10];
         int dtx = 5, radius = 16, startX = 100, divine = 1, divine2 = -1, dx = 16, dy = 16, xDif, yDif;
-        float koef;
         int OrientGraph = 1;// 1 - Oriented Graph | 0- Not oriented
         int diagonalA[N][N] = {
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -434,6 +435,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) {
         SelectObject(hdc, BlackPen);
 
         //Task 4
+        //float koef = 1.0 - 0 * 0.1 - 3 * 0.01 - 0.3;
         //generateMtx(A, (1.0 - 0 * 0.005 - 3 * 0.005 - 0.27));
         //simMatrix(A, B);
         ////printEdge(A, hdc, 600, 1); //sub-pow-nodes
@@ -441,8 +443,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) {
 
         
         //Task 2 + 3
-        
-        generateMtx(A, (1.0 - 0 * 0.01 - 3 * 0.01 - 0.3));
+        float koef = 1.0 - 0 * 0.005 - 3 * 0.005 - 0.27;
+        generateMtx(A, (1.0 - 0 * 0.005 - 3 * 0.005 - 0.27));
         simMatrix(A, B);
         printEdge(A, hdc, 600,1);
         printEdge(B, hdc, 10,0);
@@ -452,8 +454,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) {
 
         SelectObject(hdc, BlackPen);
 
-        paintLine(A, hdc, dx, dy, nx, ny, 1);
-        paintLine(B, hdc, dx, dy, nx2, ny2, 0);
+        paintLine(A, hdc, dx, dy, nx, ny, koef, 1);
+        paintLine(B, hdc, dx, dy, nx2, ny2, koef, 0);
 
         drawNodes(dx, dy, dtx, nx, ny, hdc, BPen, nn);
         drawNodes(dx, dy, dtx, nx2, ny2, hdc, BPen, nn);
