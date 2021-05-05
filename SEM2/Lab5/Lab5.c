@@ -142,9 +142,12 @@ void paintLines(HDC hdc, int matrix[N][N], int nx[N], int ny[N], int start, int 
             MoveToEx(hdc, nx[start], ny[start], NULL);
             if ((ny[start] == ny[end]) && abs(nx[start] - nx[end]) > 200) {
                 LineTo(hdc, nx[end] + xDif / 2, ny[end] - 30);
-            }
+            }   
             else if (yDif == 0 && abs(xDif) > 300 && end <= 3) {
                 LineTo(hdc, nx[end] + xDif / 2, ny[end] - 35);
+            }
+            else if (xDif == 0 && abs(yDif) > 200) {
+                LineTo(hdc, nx[end] - 30, ny[end] + yDif / 2);
             }
             else if (abs(xDif) == 300 && abs(yDif) == 300 && (end == 0 || end == 3)) {
                 LineTo(hdc, nx[end] + xDif / 2, ny[end] + yDif / 1);
@@ -154,10 +157,10 @@ void paintLines(HDC hdc, int matrix[N][N], int nx[N], int ny[N], int start, int 
     }
 }
 
-void paintVertex(HDC hdc, int xPos[N], int yPos[N], char* nn[N], int i) {
+void paintVertex(HDC hdc, int nx[N], int ny[N], char* nn[N], int i) {
     int dtx = 5, radius = 16;
-    Ellipse(hdc, xPos[i] - radius, yPos[i] - radius, xPos[i] + radius, yPos[i] + radius);
-    TextOut(hdc, xPos[i] - dtx, yPos[i] - 8, nn[i], 1);
+    Ellipse(hdc, nx[i] - radius, ny[i] - radius, nx[i] + radius, ny[i] + radius);
+    TextOut(hdc, nx[i] - dtx, ny[i] - 8, nn[i], 1);
 }
 
 void printMatrix(HDC hdc, int A[N][N]) {
@@ -166,7 +169,7 @@ void printMatrix(HDC hdc, int A[N][N]) {
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             sprintf_s(text, 2, "%d", A[i][j]);
-            TextOutA(hdc, 200 + 25 * j, 450 + 20 * i, text, 1);
+            TextOutA(hdc, 800 + 25 * j, 450 + 20 * i, text, 1);
         }
     }
 }
@@ -198,7 +201,7 @@ void generateMtx(int* matrix[N][N], float k) {
     }
 }
 
-void BFS(HDC hdc, int xPos[N], int yPos[N], char* nn[N], int A[N][N], int start) {//breadth
+void BFS(HDC hdc, int nx[N], int ny[N], char* nn[N], int A[N][N], int start) {//breadth
     struct queue* q = init();
     int visited[N] = { 0,0,0,0,0,0,0,0,0,0 };
     int distance[N][N] = {
@@ -230,9 +233,9 @@ void BFS(HDC hdc, int xPos[N], int yPos[N], char* nn[N], int A[N][N], int start)
     pushQueue(q, start);
     visited[start] = 1;
     distance[dist][start] = 1;
-    paintVertex(hdc, xPos, yPos, nn, start);
+    paintVertex(hdc, nx, ny, nn, start);
     sprintf_s(text, 2, "%d", a);
-    TextOutA(hdc, xPos[start] - 20, yPos[start] + 15, text, 1);
+    TextOutA(hdc, nx[start] - 20, ny[start] + 15, text, 1);
     while (!isEmpty(q)) {
         curVertex = popQueue(q);
         for (int i = 0; i < N; i++) {
@@ -240,22 +243,22 @@ void BFS(HDC hdc, int xPos[N], int yPos[N], char* nn[N], int A[N][N], int start)
                 k++;
                 visited[i] = k;
                 pushQueue(q, i);
-                paintLines(hdc, A, xPos, yPos, curVertex, i);
-                paintVertex(hdc, xPos, yPos, nn, i);
+                paintLines(hdc, A, nx, ny, curVertex, i);
+                paintVertex(hdc, nx, ny, nn, i);
                 system("pause");
                 system("cls");
                 dist = a + 1;
                 distance[dist][i] = 1;
                 treeMatrix[curVertex][i] = 1;
                 sprintf_s(text, 2, "%d", dist);
-                TextOutA(hdc, xPos[i] - 20, yPos[i] + 15, text, 1);
+                TextOutA(hdc, nx[i] - 20, ny[i] + 15, text, 1);
             }
         }
         a++;
     }
 
     for (int i = 0;i < N; i++) {
-        paintVertex(hdc, xPos, yPos, nn, i);
+        paintVertex(hdc, nx, ny, nn, i);
         counter = 0;
         for (int j = 0;j < N; j++) {
             if (distance[i][j]) {
@@ -271,7 +274,7 @@ void BFS(HDC hdc, int xPos[N], int yPos[N], char* nn[N], int A[N][N], int start)
     }
 }
 
-void DFS(HDC hdc, int xPos[N], int yPos[N], char* nn[N], int A[N][N], int start) {//depth
+void DFS(HDC hdc, int nx[N], int ny[N], char* nn[N], int A[N][N], int start) {//depth
     int distance[N][N] = {
     { 0,0,0,0,0,0,0,0,0,0 },
     { 0,0,0,0,0,0,0,0,0,0 },
@@ -303,9 +306,9 @@ void DFS(HDC hdc, int xPos[N], int yPos[N], char* nn[N], int A[N][N], int start)
     pushStack(s, start);
     visited[start] = 1;
     distance[dist][start] = 1;
-    paintVertex(hdc, xPos, yPos, nn, start);
+    paintVertex(hdc, nx, ny, nn, start);
     sprintf_s(text, 2, "%d", dist);
-    TextOutA(hdc, xPos[start] - 20, yPos[start] + 15, text, 1);
+    TextOutA(hdc, nx[start] - 20, ny[start] + 15, text, 1);
     while (!isEmptyStack(s)) {
         curVertex = top(s);
         for (int i = 0; i < N; i++) {
@@ -317,10 +320,10 @@ void DFS(HDC hdc, int xPos[N], int yPos[N], char* nn[N], int A[N][N], int start)
                     distance[dist][i] = 1;
                     treeMatrix[curVertex][i] = 1;
                     pushStack(s, i);
-                    paintLines(hdc, A, xPos, yPos, curVertex, i);
-                    paintVertex(hdc, xPos, yPos, nn, i);
+                    paintLines(hdc, A, nx, ny, curVertex, i);
+                    paintVertex(hdc, nx, ny, nn, i);
                     sprintf_s(text, 2, "%d", dist);
-                    TextOutA(hdc, xPos[i] - 20, yPos[i] + 15, text, 1);
+                    TextOutA(hdc, nx[i] - 20, ny[i] + 15, text, 1);
                     system("pause");
                     system("cls");
                     break;
@@ -333,7 +336,7 @@ void DFS(HDC hdc, int xPos[N], int yPos[N], char* nn[N], int A[N][N], int start)
         }
     }
     for (int i = 0;i < N; i++) {
-        paintVertex(hdc, xPos, yPos, nn, i);
+        paintVertex(hdc, nx, ny, nn, i);
         counter = 0;
         for (int j = 0;j < N; j++) {
             if (distance[i][j]) {
@@ -349,7 +352,7 @@ void DFS(HDC hdc, int xPos[N], int yPos[N], char* nn[N], int A[N][N], int start)
     }
 
     for (int i = 0;i < N; i++) {
-        paintVertex(hdc, xPos, yPos, nn, i);
+        paintVertex(hdc, nx, ny, nn, i);
     }
 }
 
