@@ -134,10 +134,7 @@ void paintLines(HDC hdc, int matrix[N][N], int nx[N], int ny[N], int start, int 
         koef = sqrt(xDif * xDif + yDif * yDif) / radius;
         if (start == end) {
             MoveToEx(hdc, nx[end], ny[end], NULL);
-            LineTo(hdc, nx[end] + 40, ny[end] + 10);
-            LineTo(hdc, nx[end] + 40, ny[end] + 40);
-            LineTo(hdc, nx[end] + 10, ny[end] + 40);
-            LineTo(hdc, nx[end], ny[end]);
+            Arc(hdc, nx[end], ny[end] - 40, nx[end] + 40, ny[end], nx[end] + 10, ny[end], nx[end], ny[end] - 10);
         } else {
             MoveToEx(hdc, nx[start], ny[start], NULL);
             if ((ny[start] == ny[end]) && abs(nx[start] - nx[end]) > 200) {
@@ -425,11 +422,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) {
             paintVertex(hdc, nx, ny, nn, i);
         }
 
-        //breadth + depth
+        //Breadth
         SelectObject(hdc, GreenPen);
-        BFS(hdc, nx, ny, nn, B, 0);
+        //BFS(hdc, nx, ny, nn, B, 4);
 
-        //DFS(hdc, nx, ny, nn, B, 3);
+        //Depth
+        DFS(hdc, nx, ny, nn, B, 3);
 
         EndPaint(hWnd, &ps);
         break;
