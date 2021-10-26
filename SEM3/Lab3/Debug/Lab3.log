@@ -1,0 +1,7 @@
+﻿  Lab3.cpp
+  shape.cpp
+  shape_editor.cpp
+  toolbar.cpp
+C:\Users\bonda\Documents\University\2-nd course\OOP\Lab3\Lab3\toolbar.cpp(100,12): warning C4101: 'pText': unreferenced local variable
+  Generating Code...
+  Lab3.vcxproj -> C:\Users\bonda\Documents\University\2-nd course\OOP\Lab3\Lab3\Debug\Lab3.exe
