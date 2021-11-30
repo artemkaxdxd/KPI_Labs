@@ -1,2 +1,0 @@
-C:\Users\Денис\Documents\GitHub\OOP-Labs\Lab2\Debug\Lab2.exe
-C:\Users\Денис\Documents\GitHub\OOP-Labs\Lab2\Debug\Lab2.pdb

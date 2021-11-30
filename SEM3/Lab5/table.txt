@@ -1,0 +1,9 @@
+Shape		x1	y1	x2	y2
+Point		17	57	17	57
+Point		15	64	14	66
+Point		14	71	14	72
+Line		8	52	35	85
+Rect		86	67	49	99
+Ellipse		109	59	134	80
+LineOO		181	60	135	113
+Cube		79	147	55	173
