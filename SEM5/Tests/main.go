@@ -100,7 +100,6 @@ func checkAround(i int, j int, field [][]string) string {
 	alive := "x"
 	aliveCount := 0
 	stateOfCell := field[i][j]
-	var statesSlice []string
 	lenF := len(field)
 	widF := len(field[i])
 
@@ -120,12 +119,9 @@ func checkAround(i int, j int, field [][]string) string {
 			if coordY > widF-1 {
 				coordY -= widF
 			}
-			statesSlice = append(statesSlice, field[coordX][coordY])
-		}
-	}
-	for _, v := range statesSlice {
-		if v == "x" {
-			aliveCount++
+			if field[coordX][coordY] == alive {
+				aliveCount++
+			}
 		}
 	}
 
