@@ -1,5 +1,6 @@
 package main
 
-func moveBlock() string {
-	return "sussyballs"
+func moveBlock(f Field) Field {
+	newField := Field{}
+	return newField
 }
