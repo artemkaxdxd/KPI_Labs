@@ -2,18 +2,14 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 )
 
-type point struct {
-	x int
-	y int
-}
-
-func (f *Field) Parse(inputFileName string) {
+func parse(f *Field, inputFileName string) {
 	file, err := os.Open(inputFileName)
 	if err != nil {
 		log.Fatal(err)
@@ -59,15 +55,50 @@ func (f *Field) Parse(inputFileName string) {
 		for j, v := range subField {
 			//fmt.Println(i, j, v)
 			if v == piece {
-				f.pieces = append(f.pieces, point{i, j})
+				f.pieces = append(f.pieces, Point{i, j})
 			}
 			if v == land {
-				f.landscape = append(f.landscape, point{i, j})
+				f.landscape = append(f.landscape, Point{i, j})
 			}
 		}
 	}
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
+	}
+}
+
+func printField(f Field) {
+	rows := f.dimensions[0]
+	cols := f.dimensions[1]
+
+	finalField := make([][]string, rows)
+
+	for i := 0; i < rows; i++ {
+		finalField[i] = make([]string, 0, cols)
+		var subField []string
+
+		for j := 0; j < cols; j++ {
+			subField = append(subField, ".")
+
+			tempPoint := Point{i, j}
+
+			for _, v := range f.landscape {
+				if tempPoint == v {
+					subField[j] = "#"
+				}
+			}
+
+			for _, v := range f.pieces {
+				if tempPoint == v {
+					subField[j] = "p"
+				}
+			}
+		}
+		finalField[i] = append(finalField[i], subField...)
+	}
+
+	for _, v1 := range finalField {
+		fmt.Println(v1)
 	}
 }
