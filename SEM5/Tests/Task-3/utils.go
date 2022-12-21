@@ -3,21 +3,15 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 )
 
-func parse(f *Field, inputFileName string) {
-	file, err := os.Open(inputFileName)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
+// Injecting a dependency of reading file
+func parse(r io.Reader, f *Field) {
+	scanner := bufio.NewScanner(r)
 
 	var inputArr []string
 	for scanner.Scan() {
@@ -53,7 +47,6 @@ func parse(f *Field, inputFileName string) {
 			log.Fatal("Width of matrix doesn't match given dimensions")
 		}
 		for j, v := range subField {
-			//fmt.Println(i, j, v)
 			if v == piece {
 				f.pieces = append(f.pieces, Point{i, j})
 			}
@@ -68,7 +61,8 @@ func parse(f *Field, inputFileName string) {
 	}
 }
 
-func printField(f Field) {
+// Injecting a dependency of printing
+func printField(w io.Writer, f Field) {
 	rows := f.dimensions[0]
 	cols := f.dimensions[1]
 
@@ -99,6 +93,10 @@ func printField(f Field) {
 	}
 
 	for _, v1 := range finalField {
-		fmt.Println(v1)
+		for _, v2 := range v1 {
+			// passing in the writer and the string of field
+			fmt.Fprint(w, v2)
+		}
+		fmt.Fprint(w, "\n")
 	}
 }

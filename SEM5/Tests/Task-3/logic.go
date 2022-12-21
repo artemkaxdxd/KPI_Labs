@@ -36,9 +36,7 @@ func moveBlock(f Field) Field {
 	return newF
 }
 
-func tetris() Field {
-	field := Field{}
-	parse(&field, "input.txt")
+func tetris(field Field) Field {
 	for {
 		newField := moveBlock(field)
 		if !reflect.DeepEqual(field, newField) {
