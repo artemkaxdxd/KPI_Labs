@@ -2,15 +2,16 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
-	"log"
 	"strconv"
 	"strings"
 )
 
 // Injecting a dependency of reading file
-func parse(r io.Reader, f *Field) {
+func parse(r io.Reader, outOs output) (*Field, error) {
+	var f = Field{}
 	scanner := bufio.NewScanner(r)
 
 	var inputArr []string
@@ -23,11 +24,11 @@ func parse(r io.Reader, f *Field) {
 
 	for i, v := range dimString {
 		if i > 1 {
-			log.Fatal("Too many arguments for field dimensions")
+			return nil, errors.New("too many arguments for field dimensions")
 		}
 		dim, err := strconv.Atoi(v)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		f.dimensions = append(f.dimensions, dim)
 	}
@@ -35,7 +36,7 @@ func parse(r io.Reader, f *Field) {
 	// Create a slice with field from input
 	lenOfMtx := len(inputArr) - 1
 	if lenOfMtx != f.dimensions[0] {
-		log.Fatal("Length of matrix doesn't match given dimensions")
+		return nil, errors.New("length of matrix doesn't match given dimensions")
 	}
 
 	piece := "p"
@@ -44,7 +45,7 @@ func parse(r io.Reader, f *Field) {
 	for i := 0; i < lenOfMtx; i++ {
 		subField := strings.Split(inputArr[i+1], "")
 		if len(subField) != f.dimensions[1] {
-			log.Fatal("Width of matrix doesn't match given dimensions")
+			return nil, errors.New("width of matrix doesn't match given dimensions")
 		}
 		for j, v := range subField {
 			if v == piece {
@@ -57,8 +58,10 @@ func parse(r io.Reader, f *Field) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
+
+	return &f, nil
 }
 
 // Injecting a dependency of printing

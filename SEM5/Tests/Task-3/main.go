@@ -1,30 +1,67 @@
 package main
 
 import (
+	"fmt"
 	"io"
-	"log"
 	"os"
 )
 
-func communicate(w io.Writer, r io.Reader, field Field) Field {
-	parse(r, &field)
+// File System interface
+var fs fileSystem = osFS{}
 
-	field = tetris(field)
+type fileSystem interface {
+	Open(name string) (file, error)
+}
 
-	printField(w, field)
-	//fmt.Println(field)
-	return field
+type file interface {
+	io.Closer
+	io.Reader
+}
+
+// osFS implements fileSystem using the local disk.
+type osFS struct{}
+
+func (osFS) Open(name string) (file, error) { return os.Open(name) }
+
+// Writer interface
+var outOs mainOutput = osOut{}
+
+type mainOutput interface {
+	Open() output
+}
+
+type output interface {
+	io.Writer
+}
+
+type osOut struct{}
+
+func (osOut) Open() output { return os.Stdout }
+
+func communicate(fs fileSystem, outOs mainOutput, str string) {
+	opener := outOs.Open()
+
+	file, err := fs.Open(str)
+	if err != nil {
+		fmt.Fprintln(opener, err.Error())
+		return
+	}
+
+	field, err := parse(file, opener)
+	if err != nil {
+		fmt.Fprintln(opener, err.Error())
+		return
+	}
+	newField := *field
+	newField = tetris(newField)
+
+	printField(opener, newField)
+
+	defer file.Close()
 }
 
 func main() {
-	field := Field{}
+	fileName := "input.txt"
 
-	file, err := os.Open("input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer file.Close()
-
-	communicate(os.Stdout, file, field)
+	communicate(fs, outOs, fileName)
 }

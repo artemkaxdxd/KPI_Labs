@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"reflect"
 	"strings"
 	"testing"
@@ -9,8 +10,6 @@ import (
 func TestMoveBlock(t *testing.T) {
 	t.Run("It should move the block one pixel down", func(t *testing.T) {
 		// Given
-		var initialField Field
-
 		input :=
 			"4 5\n" +
 				"..p..\n" +
@@ -19,14 +18,13 @@ func TestMoveBlock(t *testing.T) {
 				"#...#\n"
 
 		myReader := strings.NewReader(input)
-		parse(myReader, &initialField)
+		buffer := bytes.Buffer{}
+		initialField, _ := parse(myReader, &buffer)
 
 		// When
-		finalField := moveBlock(initialField)
+		finalField := moveBlock(*initialField)
 
 		// Then
-		var wantField Field
-
 		want :=
 			"4 5\n" +
 				".....\n" +
@@ -35,17 +33,15 @@ func TestMoveBlock(t *testing.T) {
 				"#...#\n"
 
 		myReader = strings.NewReader(want)
-		parse(myReader, &wantField)
+		wantField, _ := parse(myReader, &buffer)
 
-		if !reflect.DeepEqual(finalField, wantField) {
+		if !reflect.DeepEqual(&finalField, wantField) {
 			t.Errorf("MoveBlock: \nwant\n %v\n got\n %v", wantField, finalField)
 		}
 	})
 
 	t.Run("It should return the same field after meeting land", func(t *testing.T) {
 		// Given
-		var initialField Field
-
 		input :=
 			"4 5\n" +
 				"..p..\n" +
@@ -54,14 +50,13 @@ func TestMoveBlock(t *testing.T) {
 				"#####\n"
 
 		myReader := strings.NewReader(input)
-		parse(myReader, &initialField)
+		buffer := bytes.Buffer{}
+		initialField, _ := parse(myReader, &buffer)
 
 		// When
-		finalField := moveBlock(initialField)
+		finalField := moveBlock(*initialField)
 
 		// Then
-		var wantField Field
-
 		want :=
 			"4 5\n" +
 				"..p..\n" +
@@ -70,17 +65,15 @@ func TestMoveBlock(t *testing.T) {
 				"#####\n"
 
 		myReader = strings.NewReader(want)
-		parse(myReader, &wantField)
+		wantField, _ := parse(myReader, &buffer)
 
-		if !reflect.DeepEqual(finalField, wantField) {
+		if !reflect.DeepEqual(&finalField, wantField) {
 			t.Errorf("MoveBlock:\nwant\n %v\ngot\n %v", wantField, finalField)
 		}
 	})
 
 	t.Run("It should return the same field after falling to the bottom", func(t *testing.T) {
 		// Given
-		var initialField Field
-
 		input :=
 			"4 5\n" +
 				".....\n" +
@@ -89,14 +82,13 @@ func TestMoveBlock(t *testing.T) {
 				"#.p.#\n"
 
 		myReader := strings.NewReader(input)
-		parse(myReader, &initialField)
+		buffer := bytes.Buffer{}
+		initialField, _ := parse(myReader, &buffer)
 
 		// When
-		finalField := moveBlock(initialField)
+		finalField := moveBlock(*initialField)
 
 		// Then
-		var wantField Field
-
 		want :=
 			"4 5\n" +
 				".....\n" +
@@ -105,9 +97,9 @@ func TestMoveBlock(t *testing.T) {
 				"#.p.#\n"
 
 		myReader = strings.NewReader(want)
-		parse(myReader, &wantField)
+		wantField, _ := parse(myReader, &buffer)
 
-		if !reflect.DeepEqual(finalField, wantField) {
+		if !reflect.DeepEqual(&finalField, wantField) {
 			t.Errorf("MoveBlock:\nwant\n %v\ngot\n %v", wantField, finalField)
 		}
 	})
@@ -116,8 +108,6 @@ func TestMoveBlock(t *testing.T) {
 func TestTetris(t *testing.T) {
 	t.Run("It should reach the bottom", func(t *testing.T) {
 		// Given
-		var initialField Field
-
 		input :=
 			"4 5\n" +
 				"..p..\n" +
@@ -126,14 +116,13 @@ func TestTetris(t *testing.T) {
 				"#...#\n"
 
 		myReader := strings.NewReader(input)
-		parse(myReader, &initialField)
+		buffer := bytes.Buffer{}
+		initialField, _ := parse(myReader, &buffer)
 
 		// When
-		finalField := tetris(initialField)
+		finalField := tetris(*initialField)
 
 		// Then
-		var wantField Field
-
 		want :=
 			"4 5\n" +
 				".....\n" +
@@ -142,17 +131,15 @@ func TestTetris(t *testing.T) {
 				"#.p.#\n"
 
 		myReader = strings.NewReader(want)
-		parse(myReader, &wantField)
+		wantField, _ := parse(myReader, &buffer)
 
-		if !reflect.DeepEqual(finalField, wantField) {
+		if !reflect.DeepEqual(&finalField, wantField) {
 			t.Errorf("Tetris:\nwant\n %v\ngot\n %v", wantField, finalField)
 		}
 	})
 
 	t.Run("It should stop when it hits land", func(t *testing.T) {
 		// Given
-		var initialField Field
-
 		input :=
 			"4 5\n" +
 				"..ppp\n" +
@@ -161,14 +148,13 @@ func TestTetris(t *testing.T) {
 				"#...#\n"
 
 		myReader := strings.NewReader(input)
-		parse(myReader, &initialField)
+		buffer := bytes.Buffer{}
+		initialField, _ := parse(myReader, &buffer)
 
 		// When
-		finalField := tetris(initialField)
+		finalField := tetris(*initialField)
 
 		// Then
-		var wantField Field
-
 		want :=
 			"4 5\n" +
 				".....\n" +
@@ -177,9 +163,9 @@ func TestTetris(t *testing.T) {
 				"#...#\n"
 
 		myReader = strings.NewReader(want)
-		parse(myReader, &wantField)
+		wantField, _ := parse(myReader, &buffer)
 
-		if !reflect.DeepEqual(finalField, wantField) {
+		if !reflect.DeepEqual(&finalField, wantField) {
 			t.Errorf("Tetris:\nwant\n %v\ngot\n %v", wantField, finalField)
 		}
 	})

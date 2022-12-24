@@ -8,8 +8,6 @@ import (
 
 func TestParse(t *testing.T) {
 	// Given
-	var f Field
-
 	input :=
 		"5 6\n" +
 			"..p...\n" +
@@ -21,7 +19,8 @@ func TestParse(t *testing.T) {
 	myReader := strings.NewReader(input)
 
 	// When
-	parse(myReader, &f)
+	buffer := bytes.Buffer{}
+	f, _ := parse(myReader, &buffer)
 
 	// Then
 	rows := 5
@@ -57,8 +56,6 @@ func TestParse(t *testing.T) {
 
 func TestPrintField(t *testing.T) {
 	// Given
-	var f Field
-
 	input :=
 		"3 5\n" +
 			"..p..\n" +
@@ -66,12 +63,11 @@ func TestPrintField(t *testing.T) {
 			"#...#\n"
 
 	myReader := strings.NewReader(input)
-	parse(myReader, &f)
-
 	buffer := bytes.Buffer{}
+	f, _ := parse(myReader, &buffer)
 
 	// When
-	printField(&buffer, f)
+	printField(&buffer, *f)
 
 	// Then
 	got := buffer.String()
