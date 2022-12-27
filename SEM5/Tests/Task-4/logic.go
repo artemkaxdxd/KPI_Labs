@@ -47,3 +47,18 @@ func tetris(field Field) Field {
 	}
 	return field
 }
+
+func tetrisSaveStages(field Field) []Field {
+	var generations []Field
+	for {
+		generations = append(generations, field)
+
+		newField := moveBlock(field)
+		if !reflect.DeepEqual(field, newField) {
+			field = newField
+		} else {
+			break
+		}
+	}
+	return generations
+}

@@ -5,22 +5,36 @@ import (
 	"io"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/mock"
 )
 
-type mockFS struct{}
-
-func (mockFS) Open(s string) (file, error) {
-	myReader := strings.NewReader(s)
-	myReaderCloser := io.NopCloser(myReader)
-	return myReaderCloser, nil
+type mockFS struct {
+	mock.Mock
 }
 
-type mockOut struct{}
+func newMockFS() *mockFS {
+	return &mockFS{}
+}
+
+func (m mockFS) Open(name string) (file, error) {
+	args := m.Called(name)
+	return args.Get(0).(file), nil
+}
+
+type mockOut struct {
+	mock.Mock
+}
+
+func newMockOut() *mockOut {
+	return &mockOut{}
+}
 
 var buffer = bytes.Buffer{}
 
-func (mockOut) Open() output {
-	return &buffer
+func (m mockOut) Open() output {
+	args := m.Called()
+	return args.Get(0).(output)
 }
 
 func TestCommunicate(t *testing.T) {
@@ -28,16 +42,25 @@ func TestCommunicate(t *testing.T) {
 		buffer.Reset()
 
 		// Given
-		input := "wrong input file body"
+		mockFs := newMockFS()
 
-		var fs fileSystem = mockFS{}
-		var out mainOutput = mockOut{}
+		filename := "input.txt"
+		wrongBody := "wrong input file body"
+
+		myReader := strings.NewReader(wrongBody)
+		myReaderCloser := io.NopCloser(myReader)
+
+		mockFs.On("Open", filename).Return(myReaderCloser, nil)
+
+		mockOut := newMockOut()
+
+		mockOut.On("Open").Return(&buffer)
 
 		// When
-		communicate(fs, out, input)
+		communicate(mockFs, mockOut, filename)
 
 		got := buffer.String()
-		want := "strconv.Atoi:"
+		want := "invalid syntax"
 
 		// Then
 		if !strings.Contains(got, want) {
@@ -54,17 +77,28 @@ func TestCommunicate(t *testing.T) {
 				"#.p..\n" +
 				"#...#\n"
 
-		var fs fileSystem = mockFS{}
-		var out mainOutput = mockOut{}
+		fileName := "input.txt"
 
-		// When
-		communicate(fs, out, input)
+		mockFs := newMockFS()
 
-		got := buffer.String()
 		want :=
 			".....\n" +
 				"#.p..\n" +
 				"#.p.#\n"
+
+		myReader := strings.NewReader(input)
+		myReaderCloser := io.NopCloser(myReader)
+
+		mockFs.On("Open", fileName).Return(myReaderCloser, nil)
+
+		mockOut := newMockOut()
+
+		mockOut.On("Open").Return(&buffer)
+		// When
+		communicate(mockFs, mockOut, fileName)
+
+		got := buffer.String()
+
 		if got != want {
 			t.Errorf("Printing field:\n got:\n%s want:\n%s", got, want)
 		}

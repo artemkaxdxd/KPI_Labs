@@ -61,6 +61,9 @@ func communicate(fs fileSystem, outOs mainOutput, str string) {
 }
 
 func main() {
+	if len(os.Args) > 1 {
+		fmt.Println(os.Args[1:])
+	}
 	fileName := "input.txt"
 
 	communicate(fs, outOs, fileName)
