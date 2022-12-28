@@ -17,8 +17,9 @@ func TestMoveBlock(t *testing.T) {
 				"#...#\n" +
 				"#...#\n"
 
-		myReader := strings.NewReader(input)
 		buffer := bytes.Buffer{}
+
+		myReader := strings.NewReader(input)
 		initialField, _ := parse(myReader, &buffer)
 
 		// When
@@ -49,8 +50,9 @@ func TestMoveBlock(t *testing.T) {
 				"#####\n" +
 				"#####\n"
 
-		myReader := strings.NewReader(input)
 		buffer := bytes.Buffer{}
+
+		myReader := strings.NewReader(input)
 		initialField, _ := parse(myReader, &buffer)
 
 		// When
@@ -81,8 +83,9 @@ func TestMoveBlock(t *testing.T) {
 				"#.p.#\n" +
 				"#.p.#\n"
 
-		myReader := strings.NewReader(input)
 		buffer := bytes.Buffer{}
+
+		myReader := strings.NewReader(input)
 		initialField, _ := parse(myReader, &buffer)
 
 		// When
@@ -115,8 +118,9 @@ func TestTetris(t *testing.T) {
 				"#...#\n" +
 				"#...#\n"
 
-		myReader := strings.NewReader(input)
 		buffer := bytes.Buffer{}
+
+		myReader := strings.NewReader(input)
 		initialField, _ := parse(myReader, &buffer)
 
 		// When
@@ -147,8 +151,9 @@ func TestTetris(t *testing.T) {
 				"#....\n" +
 				"#...#\n"
 
-		myReader := strings.NewReader(input)
 		buffer := bytes.Buffer{}
+
+		myReader := strings.NewReader(input)
 		initialField, _ := parse(myReader, &buffer)
 
 		// When
@@ -167,6 +172,33 @@ func TestTetris(t *testing.T) {
 
 		if !reflect.DeepEqual(&finalField, wantField) {
 			t.Errorf("Tetris:\nwant\n %v\ngot\n %v", wantField, finalField)
+		}
+	})
+}
+
+func TestTetrisSaveSteps(t *testing.T) {
+	t.Run("It should play tetris and save all steps to an array", func(t *testing.T) {
+		// Given
+		input :=
+			"3 5\n" +
+				"..p..\n" +
+				".....\n" +
+				"#...#\n"
+
+		buffer := bytes.Buffer{}
+
+		myReader := strings.NewReader(input)
+		initialField, _ := parse(myReader, &buffer)
+
+		// When
+		savedFields := tetrisSaveSteps(*initialField)
+
+		// Then
+		gotLen := len(savedFields)
+		wantLen := 3
+
+		if gotLen != wantLen {
+			t.Errorf("Tetris with saved steps returned slice with length: want %d, got %d", wantLen, gotLen)
 		}
 	})
 }

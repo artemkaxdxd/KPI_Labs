@@ -45,6 +45,7 @@ func TestCommunicate(t *testing.T) {
 		mockFs := newMockFS()
 
 		filename := "input.txt"
+		printAllStates := false
 		wrongBody := "wrong input file body"
 
 		myReader := strings.NewReader(wrongBody)
@@ -57,7 +58,7 @@ func TestCommunicate(t *testing.T) {
 		mockOut.On("Open").Return(&buffer)
 
 		// When
-		communicate(mockFs, mockOut, filename)
+		communicate(mockFs, mockOut, filename, printAllStates)
 
 		got := buffer.String()
 		want := "invalid syntax"
@@ -78,6 +79,7 @@ func TestCommunicate(t *testing.T) {
 				"#...#\n"
 
 		fileName := "input.txt"
+		printAllSteps := false
 
 		mockFs := newMockFS()
 
@@ -95,12 +97,54 @@ func TestCommunicate(t *testing.T) {
 
 		mockOut.On("Open").Return(&buffer)
 		// When
-		communicate(mockFs, mockOut, fileName)
+		communicate(mockFs, mockOut, fileName, printAllSteps)
 
 		got := buffer.String()
 
 		if got != want {
 			t.Errorf("Printing field:\n got:\n%s want:\n%s", got, want)
+		}
+	})
+
+	t.Run("it should print final board state", func(t *testing.T) {
+		buffer.Reset()
+		// Given
+		input :=
+			"5 5\n" +
+				"..p..\n" +
+				"#.p..\n" +
+				"#...#\n" +
+				"#...#\n" +
+				"#...#\n"
+
+		fileName := "input.txt"
+		printAllSteps := true
+
+		mockFs := newMockFS()
+
+		want :=
+			"STEP 2:\n" +
+				".....\n" +
+				"#....\n" +
+				"#.p.#\n" +
+				"#.p.#\n" +
+				"#...#\n"
+
+		myReader := strings.NewReader(input)
+		myReaderCloser := io.NopCloser(myReader)
+
+		mockFs.On("Open", fileName).Return(myReaderCloser, nil)
+
+		mockOut := newMockOut()
+
+		mockOut.On("Open").Return(&buffer)
+		// When
+		communicate(mockFs, mockOut, fileName, printAllSteps)
+
+		got := buffer.String()
+
+		if !strings.Contains(got, want) {
+			t.Errorf("Printing all steps:\n got:\n%s want:\n%s", got, want)
 		}
 	})
 }

@@ -38,7 +38,7 @@ type osOut struct{}
 
 func (osOut) Open() output { return os.Stdout }
 
-func communicate(fs fileSystem, outOs mainOutput, str string) {
+func communicate(fs fileSystem, outOs mainOutput, str string, flag bool) {
 	opener := outOs.Open()
 
 	file, err := fs.Open(str)
@@ -53,18 +53,28 @@ func communicate(fs fileSystem, outOs mainOutput, str string) {
 		return
 	}
 	newField := *field
-	newField = tetris(newField)
 
-	printField(opener, newField)
+	if flag {
+		newFields := tetrisSaveSteps(newField)
+		for i, v := range newFields {
+			fmt.Fprintf(opener, "\nSTEP %d:\n", i)
+			printField(opener, v)
+		}
+	} else {
+		newField = tetris(newField)
+		printField(opener, newField)
+	}
 
 	defer file.Close()
 }
 
 func main() {
-	if len(os.Args) > 1 {
-		fmt.Println(os.Args[1:])
-	}
-	fileName := "input.txt"
+	fileName := os.Args[1]
 
-	communicate(fs, outOs, fileName)
+	printAllSteps := false
+	if len(os.Args) > 2 && os.Args[2] == "-printallsteps" {
+		printAllSteps = true
+	}
+
+	communicate(fs, outOs, fileName, printAllSteps)
 }

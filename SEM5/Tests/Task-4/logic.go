@@ -48,7 +48,7 @@ func tetris(field Field) Field {
 	return field
 }
 
-func tetrisSaveStages(field Field) []Field {
+func tetrisSaveSteps(field Field) []Field {
 	var generations []Field
 	for {
 		generations = append(generations, field)
