@@ -18,8 +18,13 @@ public class Lab0 {
         Thread_F2 T2 = new Thread_F2();
         Thread_F3 T3 = new Thread_F3();
 
-        System.out.print("Enter version of execution: ");
         if (Data.N > 1000) {
+            System.out.print("Execution versions: (1) (2) (3)\n");
+            System.out.print("\n1 - Filling data with same integers\n");
+            System.out.print("\n2 - Filling data with random integers\n");
+            System.out.print("\n3 - Generating random data, writing to files, reading from files\n");
+            System.out.print("\nEnter execution version: ");
+
             Scanner console = new Scanner(System.in);
             int ver = console.nextInt();
             if (ver > 0 && ver < 4)
