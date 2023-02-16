@@ -6,4 +6,4 @@ Projects and tasks are done using these languages:
 - C++
 - Assembly
 - Java
-- GoLang
+- Golang
