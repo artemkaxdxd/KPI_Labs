@@ -24,11 +24,6 @@ class ChecklistAdapter(
         )
     }
 
-    fun addItem (item: Checklist) {
-        items.add(item)
-        notifyItemInserted(items.size - 1)
-    }
-
     private fun saveItem (tvCheckListTitle: TextView, isChecked: Boolean) {
         if (isChecked) {
             chosen.add(tvCheckListTitle.text.toString())
