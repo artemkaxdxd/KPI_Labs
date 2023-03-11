@@ -1,9 +1,11 @@
 # Laboratory works for KPI courses.
 
-Projects and tasks are done using these languages:
+List of courses:
 
-- C
-- C++
-- Assembly
+- Algorithms and Data Structures
+- Object-Oriented Programming
+- Operational systems (Assembly)
 - Java
-- Golang
+- Testing of computer software
+- Android development
+- Multithreading programming
