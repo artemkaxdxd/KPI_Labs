@@ -1,12 +1,17 @@
 package com.example.lab_planner
 
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 
-class SubjectAdapter: RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>() {
+class SubjectAdapter(): RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>() {
+
 
     private var subjectList = emptyList<SubjectModel>()
 
@@ -21,8 +26,14 @@ class SubjectAdapter: RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>() {
         holder.itemView.findViewById<TextView>(R.id.tvName).text = subjectList[position].subjectName
         holder.itemView.findViewById<TextView>(R.id.tvTaskType).text = subjectList[position].taskType
         holder.itemView.findViewById<TextView>(R.id.tvLabsLeft).text = subjectList[position].labsLeft
-        holder.itemView.setOnClickListener {
 
+        val context = holder.itemView.findViewById<TextView>(R.id.tvName).context
+        val bundle = Bundle()
+        bundle.putString("subjectName", subjectList[position].subjectName)
+        bundle.putString("taskType", subjectList[position].taskType)
+
+        holder.itemView.setOnClickListener {
+            context.startActivity(Intent(context, SubjectActivity::class.java).putExtras(bundle))
         }
     }
 
