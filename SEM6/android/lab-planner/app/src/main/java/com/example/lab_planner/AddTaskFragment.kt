@@ -28,11 +28,12 @@ class AddTaskFragment : Fragment() {
 
             if (taskName.toString().isNotEmpty() && taskDeadline.toString().isNotEmpty() && taskMisc.toString().isNotEmpty()) {
                 (activity as SubjectActivity?)!!.addTask(taskName.toString(), taskDeadline.toString(), taskMisc.toString())
-                Toast.makeText(context, "Saved task: ${taskName.toString()}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Saved task: $taskName", Toast.LENGTH_SHORT).show()
 
                 view.findViewById<EditText>(R.id.etTaskName).text.clear()
                 view.findViewById<EditText>(R.id.etDeadline).text.clear()
                 view.findViewById<EditText>(R.id.etMisc).text.clear()
+
             } else {
                 Toast.makeText(context, "Enter data in all fields", Toast.LENGTH_SHORT).show()
             }

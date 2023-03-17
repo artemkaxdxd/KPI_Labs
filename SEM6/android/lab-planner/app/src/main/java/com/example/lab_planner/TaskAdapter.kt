@@ -1,5 +1,6 @@
 package com.example.lab_planner
 
+import android.database.sqlite.SQLiteDatabase
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +21,8 @@ class TaskAdapter(private var taskList: MutableList<TaskModel>): RecyclerView.Ad
 
         holder.itemView.apply{
             findViewById<TextView>(R.id.tvTaskName).text = taskList[position].taskName
-            findViewById<TextView>(R.id.tvDeadline).text = taskList[position].deadline
-            findViewById<TextView>(R.id.tvTaskMisc).text = taskList[position].misc
+            findViewById<TextView>(R.id.tvDeadline).text = "Deadline: " + taskList[position].deadline
+            findViewById<TextView>(R.id.tvTaskMisc).text = "Info: " + taskList[position].misc
             findViewById<CheckBox>(R.id.cbDone).isChecked = taskList[position].isChecked
 
             findViewById<CheckBox>(R.id.cbDone).setOnCheckedChangeListener {_, isChecked ->
@@ -34,10 +35,20 @@ class TaskAdapter(private var taskList: MutableList<TaskModel>): RecyclerView.Ad
         return taskList.size
     }
 
-    fun deleteTasks() {
+    fun deleteTasks(subjName: String, taskType: String, db: Database) {
+        for (task in taskList) {
+            if (task.isChecked) {
+                db.deleteTask(task.taskName, task.deadline, subjName, taskType)
+            }
+        }
         taskList.removeAll { task ->
             task.isChecked
         }
+        notifyDataSetChanged()
+    }
+
+    fun setTaskList(list: ArrayList<TaskModel>) {
+        taskList = list
         notifyDataSetChanged()
     }
 }

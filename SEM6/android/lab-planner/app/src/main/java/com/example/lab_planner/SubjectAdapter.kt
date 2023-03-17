@@ -11,8 +11,6 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 
 class SubjectAdapter(): RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>() {
-
-
     private var subjectList = emptyList<SubjectModel>()
 
     class SubjectViewHolder(view: View): RecyclerView.ViewHolder(view)
@@ -23,9 +21,9 @@ class SubjectAdapter(): RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>()
     }
 
     override fun onBindViewHolder(holder: SubjectViewHolder, position: Int) {
-        holder.itemView.findViewById<TextView>(R.id.tvName).text = subjectList[position].subjectName
-        holder.itemView.findViewById<TextView>(R.id.tvTaskType).text = subjectList[position].taskType
-        holder.itemView.findViewById<TextView>(R.id.tvLabsLeft).text = subjectList[position].labsLeft
+        holder.itemView.findViewById<TextView>(R.id.tvName).text = "Subject: " + subjectList[position].subjectName
+        holder.itemView.findViewById<TextView>(R.id.tvTaskType).text = "Type of tasks: " + subjectList[position].taskType
+        holder.itemView.findViewById<TextView>(R.id.tvLabsLeft).text = "Tasks left: " + subjectList[position].labsLeft.toString()
 
         val context = holder.itemView.findViewById<TextView>(R.id.tvName).context
         val bundle = Bundle()

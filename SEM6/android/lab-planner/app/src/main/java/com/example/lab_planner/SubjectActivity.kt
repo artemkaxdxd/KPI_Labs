@@ -15,14 +15,27 @@ class SubjectActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySubjectBinding
     lateinit var taskAdapter: TaskAdapter
+    private lateinit var db: Database
     lateinit var recyclerView: RecyclerView
-    private val taskList = ArrayList<TaskModel>()
+    lateinit var subjAdapter: SubjectAdapter
+
+    private lateinit var subjName: String
+    private lateinit var taskType: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivitySubjectBinding.inflate(layoutInflater)
+
+        db = Database(this)
+
         setContentView(binding.root)
+        val bundle = intent.extras
+        if (bundle != null) {
+            findViewById<TextView>(R.id.tvSubjName).text = "Subject: " + bundle.getString("subjectName")
+            subjName = bundle.getString("subjectName").toString()
+            findViewById<TextView>(R.id.tvSubjTaskType).text = "Type of tasks: " + bundle.getString("taskType")
+            taskType = bundle.getString("taskType").toString()
+        }
         initialize()
 
         findViewById<Button>(R.id.btnAddTask).setOnClickListener {
@@ -31,27 +44,23 @@ class SubjectActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btnDeleteTasks).setOnClickListener {
-            taskAdapter.deleteTasks()
+            taskAdapter.deleteTasks(subjName, taskType, db)
         }
 
         findViewById<Button>(R.id.btnDeleteSubject).setOnClickListener {
             if (taskAdapter.itemCount == 0) {
-                // delete subject
+                db.deleteSubject(subjName, taskType)
+
+                finish()
             } else {
                 Toast.makeText(applicationContext, "Cannot delete subject if there are still tasks to complete", Toast.LENGTH_LONG).show()
             }
-        }
-
-        val bundle = intent.extras
-        if (bundle != null) {
-            findViewById<TextView>(R.id.tvSubjName).text = bundle.getString("subjectName")
-            findViewById<TextView>(R.id.tvSubjTaskType).text = bundle.getString("taskType")
         }
     }
 
     private fun initialize() {
         recyclerView = binding.rvLabs
-        taskAdapter = TaskAdapter(setTask())
+        taskAdapter = TaskAdapter(getTask())
         recyclerView.adapter = taskAdapter
     }
 
@@ -62,13 +71,12 @@ class SubjectActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun setTask(): ArrayList<TaskModel> {
-        val task1 = TaskModel("Lab1", "03/04", "google class for info", false)
-        taskList.add(task1)
-        return taskList
+    fun addTask(taskName: String, deadline: String, misc: String) {
+        db.addDataTask(taskName, deadline, misc, subjName, taskType)
+        taskAdapter.setTaskList(getTask())
     }
 
-    fun addTask(taskName: String, deadline: String, misc: String) {
-        taskList.add(TaskModel(taskName, deadline, misc, false))
+    private fun getTask(): ArrayList<TaskModel> {
+        return db.getArrayListOfTasks(subjName)
     }
 }

@@ -13,18 +13,37 @@ class MainActivity : AppCompatActivity() {
     lateinit var subjAdapter: SubjectAdapter
     lateinit var recyclerViewSubj: RecyclerView
 
+    private lateinit var db: Database
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
+        db = Database(this)
+
+        // Delete database:
+        // db.onUpgrade(db.writableDatabase, 1, 2)
+
         setContentView(binding.root)
+
         initialize()
 
         findViewById<Button>(R.id.btnAddSubject).setOnClickListener {
             val fragmentAddSubject = AddSubjectFragment()
-            // add a fragment to add a subject to the list
             addFragment(fragmentAddSubject)
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        subjAdapter.setList(getSubject())
+    }
+
+    private fun initialize() {
+        recyclerViewSubj = binding.rvSubj
+        subjAdapter = SubjectAdapter()
+        recyclerViewSubj.adapter = subjAdapter
+        subjAdapter.setList(getSubject())
     }
 
     private fun addFragment(fragment: Fragment) {
@@ -34,28 +53,12 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun initialize() {
-        recyclerViewSubj = binding.rvSubj
-        subjAdapter = SubjectAdapter()
-        recyclerViewSubj.adapter = subjAdapter
-        subjAdapter.setList(setSubject())
+    fun addSubject(subjectName: String, taskType: String) {
+        db.addDataSubject(subjectName, taskType)
+        subjAdapter.setList(getSubject())
     }
 
-    fun setSubject(): ArrayList<SubjectModel> {
-        val subjList = ArrayList<SubjectModel>()
-
-        val subject1 = SubjectModel("111", "labs", "1")
-        subjList.add(subject1)
-
-        val subject2 = SubjectModel("222", "labs", "2")
-        subjList.add(subject2)
-
-        val subject3 = SubjectModel("333", "labs", "3")
-        subjList.add(subject3)
-
-        val subject4 = SubjectModel("444", "labs", "4")
-        subjList.add(subject4)
-
-        return subjList
+    private fun getSubject(): ArrayList<SubjectModel> {
+        return db.getArrayListOfSubjects()
     }
 }
