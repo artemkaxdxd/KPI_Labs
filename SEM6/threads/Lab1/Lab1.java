@@ -12,7 +12,7 @@ T4 = Z, MD, p
 */
 
 public class Lab1 {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
 
         System.out.println("N = " + Data.N + "\n");
 
@@ -25,8 +25,5 @@ public class Lab1 {
         thread2.start();
         thread3.start();
         thread4.start();
-
-
-
     }
 }

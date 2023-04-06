@@ -1,10 +1,6 @@
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//МА= MD*MC *d + max(Z)*(MX+MM)*p
-//T1 = d, MA, MM
-//T2 = MX, MC
-//T4 = Z, MD, p
 public class Data {
     public static int N = 4;
     public static int P = 4;
@@ -19,8 +15,6 @@ public class Data {
     public static int[][] MX = new int[N][N];
     public static int[][] MM = new int[N][N];
     public static int[][] MA = new int[N][N];
-    public static int[][] subMtx1 = new int[N][N];
-    public static int[][] subMtx2 = new int[N][N];
 
     // Введення даних в Т1 Т2 та Т4
     public static final Semaphore SemInput_T1 = new Semaphore(0);
@@ -61,18 +55,6 @@ public class Data {
         return Math.max(z.get(), z_i);
     }
 
-//    public static int[][] sumMtx(int[][] Mtx1, int[][] Mtx2) {
-//        int[][] Mtx3 = new int[Mtx1.length][Mtx2[0].length];
-//
-//        for (int i = 0; i < Mtx3.length; i++) {
-//            for (int j = 0; j < Mtx3[i].length; j++) {
-//                Mtx3[i][j] = Mtx1[i][j] + Mtx2[i][j];
-//            }
-//        }
-//
-//        return Mtx3;
-//    }
-
     public static int[][] sumMtx (int[][] Mtx1, int[][] Mtx2) {
         int[][] res = new int[Mtx1.length][Mtx1[0].length];
         for (int i = 0; i < Mtx1.length; i++) {
@@ -89,24 +71,6 @@ public class Data {
         for (int i = 0; i < tempMtx.length; i++) {
             for (int j = 0; j < tempMtx[i].length; j++) {
                 tempMtx[i][j] = Mtx1[i][j] + Mtx2[i][j];
-            }
-        }
-
-        return tempMtx;
-    }
-
-    public static int[][] mulMtx(int[][] Mtx1, int[][] Mtx2) {
-        int m  = Mtx1.length;
-        int n = Mtx2[0].length;
-        int o = Mtx2.length;
-
-        int[][] tempMtx = new int[m][n];
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                for (int k = 0; k < o; k++) {
-                    tempMtx[i][j] += Mtx1[i][k] * Mtx2[k][j];
-                }
             }
         }
 
@@ -136,20 +100,6 @@ public class Data {
         for (int i = 0; i < tempMtx.length; i++) {
             for (int j = 0; j < tempMtx[i].length; j++) {
                 tempMtx[i][j] = Mtx[i][j] * scalar1 * scalar2;
-            }
-        }
-
-        return tempMtx;
-    }
-
-    public static int[][] mulSubMtxAndScalar(int[][] Mtx, int a, int start, int end) {
-        int[][] tempMtx = new int[N][end-start];
-
-        for (int i = 0; i < N; i++) {
-            int k = 0;
-            for (int j = start; j < end; j++) {
-                tempMtx[i][k] = Mtx[i][j] * a;
-                k++;
             }
         }
 
@@ -189,5 +139,4 @@ public class Data {
             System.out.println();
         }
     }
-
 }
