@@ -1,15 +1,17 @@
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Data {
-    public static int N = 4;
+    public static int N = 800;
     public static int P = 4;
     public static int H = N/P;
     public static int[] Z = new int[N];
-    public static AtomicInteger z = new AtomicInteger(0);
-    public static AtomicInteger d = new AtomicInteger();
-    public static AtomicInteger p = new AtomicInteger();
-
+    public static AtomicInteger A1 = new AtomicInteger(0);
+    public static final Object CS1 = new Object();
+    public static final ReentrantLock B1 = new ReentrantLock();
+    public static int d = 0;
+    public static int p = 0;
     public static int[][] MD = new int[N][N];
     public static int[][] MC = new int[N][N];
     public static int[][] MX = new int[N][N];

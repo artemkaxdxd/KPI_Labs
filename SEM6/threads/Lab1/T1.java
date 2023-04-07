@@ -10,7 +10,7 @@ public class T1 extends Thread {
             System.out.println("1: Старт T1");
 
             System.out.println("1: Ввід d");
-            Data.d.set(1);
+            Data.d = 1;
 
             System.out.println("1: Ввід матриці MM");
             Data.MM = Data.insertMtxWithNum(1);
@@ -25,23 +25,29 @@ public class T1 extends Thread {
                 System.out.println("1: T1 отримує дозвіл T2 T4");
 
                 z1_1 = Data.maxSubArr(Data.Z, 0, Data.H);
-                Data.z.set(Data.setMax(Data.z, z1_1));
+                Data.A1.set(Data.setMax(Data.A1, z1_1));
 
                 Data.SemEndZ_T1.release(3);
 
                 try {
                     System.out.println("1: T1 чекає на EndZ_T[2, 3, 4]");
-
                     Data.SemEndZ_T2.acquire();
                     Data.SemEndZ_T3.acquire();
                     Data.SemEndZ_T4.acquire();
+                    System.out.println("1: T1 отримало EndZ_T[2, 3, 4]");
 
-                    System.out.println("1: T1 отримало на EndZ_T[2, 3, 4]");
+                    z_1 = Data.A1.get();
 
+                    synchronized (Data.CS1) {
+                        d_1 = Data.d;
+                    }
 
-                    z_1 = Data.z.get();
-                    d_1 = Data.d.get();
-                    p_1 = Data.p.get();
+                    Data.B1.lock();
+                    try {
+                        p_1 = Data.p;
+                    } finally {
+                        Data.B1.unlock();
+                    }
 
                     int[][] subSumMtx1 = Data.sumSubMtx(Data.MX, Data.MM, 0, Data.H);
                     int[][] part2 = Data.mulMtxAndScalars(subSumMtx1, z_1, p_1);
@@ -58,6 +64,11 @@ public class T1 extends Thread {
 
                     System.out.println("1: Вивід результату MO:");
                     Data.printMatrix(Data.MA);
+
+                    long finishTime = System.currentTimeMillis() - Lab1.curTime;
+                    System.out.println("N = "+ Data.N);
+                    System.out.println("Time of execution: " + finishTime);
+
 
                 } catch (Exception e) {
                     throw new RuntimeException(e);

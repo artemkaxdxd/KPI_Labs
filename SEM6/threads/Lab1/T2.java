@@ -5,7 +5,7 @@ public class T2 extends Thread {
     private int p_2; // p
 
     @Override
-    public synchronized void run() {
+    public void run() {
         try {
             System.out.println("2: Старт T2");
 
@@ -25,20 +25,27 @@ public class T2 extends Thread {
                 System.out.println("2: T2 отримує дозвіл T1 T4");
 
                 z2_1 = Data.maxSubArr(Data.Z, Data.H, Data.H * 2);
-                Data.z.set(Data.setMax(Data.z, z2_1));
+                Data.A1.set(Data.setMax(Data.A1, z2_1));
 
                 Data.SemEndZ_T2.release(1);
 
                 try {
                     System.out.println("2: T2 чекає на EndZ_T[1, 3, 4]");
                     Data.SemEndZ_T1.acquire();
+                    System.out.println("2: T2 отримало EndZ_T[1, 3, 4]");
 
+                    z_2 = Data.A1.get();
 
-                    System.out.println("2: T2 отримало на EndZ_T[1, 3, 4]");
+                    synchronized (Data.CS1) {
+                        d_2 = Data.d;
+                    }
 
-                    z_2 = Data.z.get();
-                    d_2 = Data.d.get();
-                    p_2 = Data.p.get();
+                    Data.B1.lock();
+                    try {
+                        p_2 = Data.p;
+                    } finally {
+                        Data.B1.unlock();
+                    }
 
                     int[][] subSumMtx1 = Data.sumSubMtx(Data.MX, Data.MM, Data.H, Data.H * 2);
                     int[][] part2 = Data.mulMtxAndScalars(subSumMtx1, z_2, p_2);

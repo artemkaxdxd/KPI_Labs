@@ -5,7 +5,7 @@ public class T4 extends Thread {
     private int p_4; // p
 
     @Override
-    public synchronized void run() {
+    public void run() {
         try {
             System.out.println("4: Старт T4");
 
@@ -16,7 +16,7 @@ public class T4 extends Thread {
             Data.MD = Data.insertMtxWithNum(1);
 
             System.out.println("4: Ввід z");
-            Data.p.set(1);
+            Data.p = 1;
 
             System.out.println("4: T4 звільнює дозвіл для інших семафорів");
             Data.SemInput_T4.release(3);
@@ -28,7 +28,7 @@ public class T4 extends Thread {
                 System.out.println("4: T4 отримує дозвіл T1 T2");
 
                 z4_1 = Data.maxSubArr(Data.Z, Data.H * 3, Data.N);
-                Data.z.set(Data.setMax(Data.z, z4_1));
+                Data.A1.set(Data.setMax(Data.A1, z4_1));
 
                 System.out.println("4: T4 звільнює дозвіл для інших семафорів");
                 Data.SemEndZ_T4.release(1);
@@ -36,12 +36,20 @@ public class T4 extends Thread {
                 try {
                     System.out.println("4: T4 чекає на EndZ_T[1, 2, 3]");
                     Data.SemEndZ_T1.acquire();
+                    System.out.println("4: T4 отримало EndZ_T[1, 2, 3]");
 
-                    System.out.println("4: T4 отримало на EndZ_T[1, 2, 3]");
+                    z_4 = Data.A1.get();
 
-                    z_4 = Data.z.get();
-                    d_4 = Data.d.get();
-                    p_4 = Data.p.get();
+                    synchronized (Data.CS1) {
+                        d_4 = Data.d;
+                    }
+
+                    Data.B1.lock();
+                    try {
+                        p_4 = Data.p;
+                    } finally {
+                        Data.B1.unlock();
+                    }
 
                     int[][] subSumMtx1 = Data.sumSubMtx(Data.MX, Data.MM, Data.H * 3, Data.N);
                     int[][] part2 = Data.mulMtxAndScalars(subSumMtx1, z_4, p_4);
