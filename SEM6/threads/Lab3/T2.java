@@ -27,11 +27,11 @@ public class T2 extends Thread {
         R2 = Mon.Read_R();
 
         // Обчислення 1
-        int[] Ah = Data.mulVecAndSubMtx(R2, Mon.MC, start, end);
-        Mon.insertPartVec(Ah, Mon.A, start, end);
+        int[] Ah = Mon.mulVecAndSubMtx(R2, Mon.MC, start, end);
+        Mon.Write_A(Ah, start, end);
 
         // Обчислення 2
-        int a2 = Data.mulTwoSubVecs(Mon.B, Mon.Z, start, end);
+        int a2 = Mon.mulTwoSubVecs(Mon.B, Mon.Z, start, end);
 
         // Обчислення 3
         // КД2
@@ -54,7 +54,7 @@ public class T2 extends Thread {
                 Mon.mulVecAndSubMtx(A2, Mon.MD, start, end),
                 Mon.mulSubVecAndScalars(Mon.E, a2_1, d2, start, end)
         );
-        Mon.insertPartVec(Xh, Mon.X, start, end);
+        Mon.Write_X(Xh, start, end);
 
         // Сигнал про завершення обчислення Х
         Mon.signal_Out();

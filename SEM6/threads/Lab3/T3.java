@@ -17,7 +17,7 @@ public class T3 extends Thread {
         System.out.println("T3 start");
         // input B, d
         Mon.B = Mon.insertVecWithNum(1);
-        Mon.d = 1;
+        Mon.Write_d(1);
 
         // Сигнал про введення даних
         Mon.signal_Input();
@@ -28,11 +28,11 @@ public class T3 extends Thread {
         R3 = Mon.Read_R();
 
         // Обчислення 1
-        int[] Ah = Data.mulVecAndSubMtx(R3, Mon.MC, start, end);
-        Mon.insertPartVec(Ah, Mon.A, start, end);
+        int[] Ah = Mon.mulVecAndSubMtx(R3, Mon.MC, start, end);
+        Mon.Write_A(Ah, start, end);
 
         // Обчислення 2
-        int a3 = Data.mulTwoSubVecs(Mon.B, Mon.Z, start, end);
+        int a3 = Mon.mulTwoSubVecs(Mon.B, Mon.Z, start, end);
 
         // Обчислення 3
         // КД2
@@ -55,13 +55,13 @@ public class T3 extends Thread {
                 Mon.mulVecAndSubMtx(A3, Mon.MD, start, end),
                 Mon.mulSubVecAndScalars(Mon.E, a3_1, d3, start, end)
         );
-        Mon.insertPartVec(Xh, Mon.X, start, end);
+        Mon.Write_X(Xh, start, end);
 
         // Чекати на завершення обчислення Х в інших потоках
         Mon.wait_Out();
 
         // Вивід результату
-        Mon.printVector(Mon.X);
+        Mon.print_X();
         System.out.println("\nT3 end");
 
         long finishTime = System.currentTimeMillis() - Lab3.curTime;

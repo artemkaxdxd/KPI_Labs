@@ -1,13 +1,13 @@
 // Монітор
 public class Data {
-    public static int N = 800;
-    private static int P = 4;
+    public static int N = 4;
+    private final static int P = 4;
     public static int H = N/P;
 
     private int a = 0; // --СР
-    int d = 0; // --СР
-    int[] A = new int[N]; // --СР
-    int[] R = new int[N]; // --СР
+    private int d = 0; // --СР
+    private int[] A = new int[N]; // --СР
+    private int[] R = new int[N]; // --СР
     int[] B = new int[N];
     int[] Z = new int[N];
     int[] E = new int[N];
@@ -37,8 +37,20 @@ public class Data {
         return d;
     }
 
+    public synchronized void Write_d(int input) { d = input; }
+    public synchronized void Write_R(int input) {
+        for (int i = 0; i < N; ++i)
+            R[i] = input;
+    }
     public synchronized void put_a(int input) {
         a = a + input;
+    }
+    public synchronized void Write_A(int[] From, int start, int end) {
+        int j = 0;
+        for (int i = start; i < end; ++i) {
+            A[i] = From[j];
+            j++;
+        }
     }
 
     // Секція синхронізації
@@ -118,15 +130,21 @@ public class Data {
         return resVec;
     }
 
-    // Допоміжні функції
-    public static void insertPartVec(int[] From, int[] To, int start, int end) {
+    public synchronized void Write_X(int[] From, int start, int end) {
         int j = 0;
         for (int i = start; i < end; ++i) {
-            To[i] = From[j];
+            X[i] = From[j];
             j++;
         }
     }
 
+    public synchronized void print_X() {
+        for (int i = 0; i < N; ++i) {
+            System.out.print(X[i] + " ");
+        }
+    }
+
+    // Допоміжні функції
     public static int[][] insertMtxWithNum (int num) {
         int tempMtx[][] = new int[N][N];
         for (int i = 0; i < N; ++i)
@@ -140,11 +158,5 @@ public class Data {
         for (int i = 0; i < N; ++i)
             tempVec[i] = num;
         return tempVec;
-    }
-
-    public static void printVector(int[] Vector) {
-        for (int i = 0; i < N; ++i) {
-            System.out.print(Vector[i] + " ");
-        }
     }
 }
