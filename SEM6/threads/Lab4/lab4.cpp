@@ -18,6 +18,8 @@ T4 = MT, d
 #include "lab4.h"
 #include "util.cpp"
 
+using namespace std;
+
 int main(int argc, char *argv[])
 {
   std::cout << "--Start" << std::endl;
@@ -30,6 +32,9 @@ int main(int argc, char *argv[])
   a = 0;
   omp_lock_t lock_sortX;
   omp_init_lock(&lock_sortX);
+
+  int *Xh1, *Xh2, *Xh3, *Xh4;
+  int *X2h1, *X2h2;
 
   int cp_d, cp_a;
   int *cp_Z, *cp_X;
@@ -82,31 +87,41 @@ int main(int argc, char *argv[])
     }
 
     // Обчислення 1 -- sort(d*Bh + Z*MMh)
-#pragma omp for
-    for (int i = 0; i < N; i++)
+    switch (threadId)
     {
-      int part = 0;
-
-      for (int j = 0; j < N; j++)
-      {
-        part += MM[i][j] * cp_Z[j];
-      }
-      X[i] = cp_d * B[i] + part;
+    case 0:
+      Xh1 = util::CalculateXH(0, cp_d, cp_Z, MM, B);
+      break;
+    case 1:
+      Xh2 = util::CalculateXH(H, cp_d, cp_Z, MM, B);
+      break;
+    case 2:
+      Xh3 = util::CalculateXH(H * 2, cp_d, cp_Z, MM, B);
+      break;
+    case 3:
+      Xh4 = util::CalculateXH(H * 3, cp_d, cp_Z, MM, B);
+      break;
+    default:
+      break; // noop
     }
+#pragma omp barrier
 
-#pragma omp for
-    for (int i = 0; i < N; i++)
+    if (threadId == 0)
     {
-      for (int j = 0; j < N - i; j++)
-      {
-        if (X[j] > X[j + 1])
-        {
-          std::swap(X[j], X[j + 1]);
-        }
-      }
+      X2h1 = util::AddVectors(Xh1, Xh2);
     }
+    else if (threadId == 2)
+    {
+      X2h2 = util::AddVectors(Xh3, Xh4);
+    }
+#pragma omp barrier
 
-#pragma omp barrier // Очікування обчислення X
+    if (threadId == 0)
+    {
+      // X = sort(X2h1 + X2h2)
+      X = util::SortVector(util::AddVectors(X2h1, X2h2));
+    }
+#pragma omp barrier
 
     // Обчислення 2 -- (Bh * Zh)
 #pragma omp for
