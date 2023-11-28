@@ -1,0 +1,11 @@
+<button type="button" (click)="condition = !condition" [ngClass]="{ 'a':
+condition, 'b': !condition }">
+  Toggle to {{condition ? 'false' : 'true'}}
+</button>
+<p *appOtherIf="condition" class="otherif a">
+  (A) Condition is false.
+</p>
+<p *appOtherIf="!condition" class=" otherif b">
+  (B) Although the condition is true, this paragraph is displayed.
+  17
+</p>
