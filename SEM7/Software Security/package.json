@@ -1,0 +1,21 @@
+{
+  "name": "auth_examples",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "basic_auth": "node basic_auth/index.js",
+    "forms_auth": "node forms_auth/index.js",
+    "token_auth": "node token_auth/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "on-finished": "^2.4.1",
+    "uuid": "^9.0.1"
+  }
+}
