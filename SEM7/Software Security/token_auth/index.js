@@ -1,122 +1,86 @@
-const uuid = require('uuid');
 const express = require('express');
-const onFinished = require('on-finished');
 const bodyParser = require('body-parser');
 const path = require('path');
-const port = 3000;
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
+const { AuthenticationClient, UserInfoClient } = require('auth0');
+
+const serverPort = 3000;
+
+const authClient = new AuthenticationClient({
+    domain: 'dev-zu5fi3y8yfa18hqy.us.auth0.com',
+    clientId: 'YNf99vxIkTuiN8gFH3a3G6dcfPIb4lTB',
+    clientSecret: 'wi_NbOehRSGEmCz5UcU6OwocV-w7ig7ciELHcLP3w90vovbQvQrG7DKeMkSOanCs',
+});
+
+const userInfo = new UserInfoClient({
+    domain: 'dev-zu5fi3y8yfa18hqy.us.auth0.com',
+});
+
+const AUTH_HEADER = 'Authorization';
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const SESSION_KEY = 'Authorization';
-
-class Session {
-    #sessions = {}
-
-    constructor() {
-        try {
-            this.#sessions = fs.readFileSync('./sessions.json', 'utf8');
-            this.#sessions = JSON.parse(this.#sessions.trim());
-
-            console.log(this.#sessions);
-        } catch (e) {
-            this.#sessions = {};
-        }
-    }
-
-    #storeSessions() {
-        fs.writeFileSync('./sessions.json', JSON.stringify(this.#sessions), 'utf-8');
-    }
-
-    set(key, value) {
-        if (!value) {
-            value = {};
-        }
-        this.#sessions[key] = value;
-        this.#storeSessions();
-    }
-
-    get(key) {
-        return this.#sessions[key];
-    }
-
-    init(res) {
-        const sessionId = uuid.v4();
-        this.set(sessionId);
-
-        return sessionId;
-    }
-
-    destroy(req, res) {
-        const sessionId = req.sessionId;
-        delete this.#sessions[sessionId];
-        this.#storeSessions();
-    }
-}
-
-const sessions = new Session();
-
-app.use((req, res, next) => {
+app.use(async (req, _, next) => {
     let user = {};
-    let token = req.get(SESSION_KEY)
-    if (token) {
-        const decoded = jwt.verify(token, 'someJWTSecret');
-        user = decoded;
-    }
-
+    try {
+        const token = req.get(AUTH_HEADER);
+        if (token) {
+            const { data } = await userInfo.getUserInfo(token);
+            user = data;
+        }
+    } catch (err) { }
     req.user = user;
     next();
 });
 
 app.get('/', (req, res) => {
-    if (req.user.username) {
-        return res.json({
-            username: req.user.username,
-            logout: 'http://localhost:3000/logout'
-        })
+    if (req.user.nickname) {
+        return res.json(req.user);
     }
     res.sendFile(path.join(__dirname + '/index.html'));
-})
-
-app.get('/logout', (req, res) => {
-    sessions.destroy(req, res);
-    res.redirect('/');
 });
 
-const users = [
-    {
-        login: 'Login',
-        password: 'Password',
-        username: 'Username',
-    },
-    {
-        login: 'Login1',
-        password: 'Password1',
-        username: 'Username1',
+// Додаткове завдання
+app.post('/api/signup', async (req, res) => {
+    const { login, password } = req.body;
+    try {
+        await authClient.database.signUp({
+            email: login,
+            password: password,
+            connection: 'Username-Password-Authentication',
+        });
+        const { data } = await authClient.oauth.passwordGrant({
+            username: login,
+            password: password,
+            scope: 'offline_access'
+        });
+        res.json(data).send();
+    } catch (err) {
+        res.status(401).send();
     }
-]
+});
 
 app.post('/api/login', async (req, res) => {
     const { login, password } = req.body;
-
-    const user = users.find((user) => {
-        if (user.login == login && user.password == password) {
-            return true;
-        }
-        return false
-    });
-
-    if (user) {
-        const token = await jwt.sign(user, 'someJWTSecret');
-        res.json({ token });
+    try {
+        const { data } = await authClient.oauth.passwordGrant({
+            username: login,
+            password,
+            scope: 'offline_access'
+        });
+        res.json(data).send();
+    } catch (err) {
+        res.status(401).send();
     }
-
-    res.status(401).send();
 });
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+app.post('/api/refresh', async (req, res) => {
+    const refresh_token = req.get(AUTH_HEADER);
+    const { data } = await authClient.oauth.refreshTokenGrant({ refresh_token });
+    res.json(data).send();
+});
+
+app.listen(serverPort, () => {
+    console.log(`listening on port ${serverPort}`)
 })
