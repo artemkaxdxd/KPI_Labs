@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <main id="main-holder">
+        <button id="logout">Logout</button>
+    </main>
+</body>
+<style>
+    html {
+        height: 100%;
+    }
+
+    body {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+        background-color: #3a3a3a;
+    }
+
+    #logout {
+        opacity: 0;
+    }
+
+    #main-holder {
+        width: 50%;
+        height: 70%;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+        background-color: white;
+        border-radius: 7px;
+        box-shadow: 0px 0px 5px 2px black;
+    }
+</style>
+
+<script>
+    const accessToken = sessionStorage.getItem('accessToken');
+    const refreshToken = sessionStorage.getItem('refreshToken');
+    const tokenExpiry = sessionStorage.getItem('tokenExpiry');
+
+    const REFRESH_TOKEN = 60;
+
+    const tokenRefreshing = false;
+
+    const timestamp = Math.floor(new Date().getTime() / 1000);
+
+    if (refreshToken && timestamp > parseInt(tokenExpiry)) {
+        axios({
+            method: 'post',
+            url: '/api/refresh',
+            headers: {
+                Authorization: refreshToken
+            }
+        }).then((response) => {
+            const { access_token, expires_in } = response.data;
+            sessionStorage.setItem('accessToken', access_token);
+            sessionStorage.setItem('tokenExpiry', Math.floor(new Date(Date.now()
+                + REFRESH_TOKEN * 1000).getTime() / 1000));
+            location.reload();
+        }).catch((response) => {
+            console.log(response);
+        });
+    } else if (accessToken) {
+        axios.get('/api/profile', {
+            headers: {
+                Authorization: 'Bearer ' + accessToken
+            }
+        }).then((response) => {
+            const { nickname } = response.data;
+            if (nickname) {
+                const mainHolder = document.getElementById("main-holder");
+                mainHolder.append(`Hello ${nickname}`);
+                logoutButton.style.opacity = 1;
+            }
+        });
+    } else {
+        const params = (new URL(document.location)).searchParams;
+        const code = params.get("code");
+        if (code) {
+            axios({
+                method: 'get',
+                url: '/api/callback',
+                params: {
+                    code
+                }
+            }).then((response) => {
+                const { access_token, refresh_token, expires_in } =
+                    response.data;
+                console.log(response.data);
+                sessionStorage.setItem('accessToken', access_token);
+                sessionStorage.setItem('refreshToken', refresh_token);
+                sessionStorage.setItem('tokenExpiry', Math.floor(new
+                    Date(Date.now() + REFRESH_TOKEN * 1000).getTime() / 1000));
+                let params = new URLSearchParams(location.search)
+                params.delete('code')
+                history.replaceState(null, '', '?' + params + location.hash)
+                location.reload();
+            }).catch((response) => {
+            });
+        } else {
+            window.location = '/api/redirect';
+        }
+    }
+
+    const logoutButton = document.getElementById("logout");
+    logoutButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+        location.reload();
+    });
+</script>
+
+</html>
