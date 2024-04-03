@@ -1,0 +1,72 @@
+---
+title: "St_3_[24]"
+output: html_notebook
+---
+
+# Libraries
+
+```{r}
+library(ggplot2)
+```
+
+# Simulation Parameters
+
+```{r}
+set.seed(40)
+lambda <- 0.2
+num_runs <- 1000
+num_samples <- 40
+```
+
+# Generate Data
+
+```{r}
+# Generate distribution of means
+mean_distribution <- replicate(num_runs, mean(rexp(num_samples, lambda)))
+
+# Calculate sample mean and variance
+sample_mean <- mean(mean_distribution)
+sample_var <- var(mean_distribution)
+
+# Generate distribution of variances
+variance_distribution <- replicate(num_runs, {
+  sampled_mean <- sample(mean_distribution, num_samples, replace = FALSE)
+  var(sampled_mean)
+})
+
+# Theoretical variance
+theoretical_var <- ((1 / lambda)^2) / num_samples
+```
+
+# Visualizations
+
+### Mean Distribution
+
+```{r}
+ggplot(data = data.frame(mean_distribution = mean_distribution), aes(x = mean_distribution)) + 
+  geom_histogram(aes(y = ..density..), fill = "grey") +
+  geom_vline(xintercept = sample_mean, size = 1, color = 'blue') +
+  stat_function(fun = dnorm, args = list(mean = sample_mean, sd = sqrt(sample_var/num_samples)), colour = "brown") +
+  labs(title = "Mean Distribution")
+```
+
+### Variance Distribution
+
+```{r}
+ggplot(data = data.frame(variance_distribution = variance_distribution), aes(x = variance_distribution)) + 
+  geom_histogram(aes(y = ..density..), fill = "grey") +
+  geom_vline(xintercept = sample_var, size = 1, color = 'yellow') +
+  geom_vline(xintercept = theoretical_var, size = 1, color = 'blue') +
+  labs(title = "Variance Distribution")
+```
+
+# Summary
+
+```{r}
+summary_data <- data.frame(
+  Parameter = c("Sample Mean", "Sample Variance", "Theoretical Variance"),
+  Value = c(sample_mean, sample_var, theoretical_var)
+)
+
+summary_data
+```

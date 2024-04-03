@@ -1,0 +1,55 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*.
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+1.  Merging the training data set (train/X_train.txt—7352 rows, 561 columns) and the testing data set (test/X_test.txt—2947 rows, 561 columns) to create one data set (10229 rows, 561 columns).
+
+```{r}
+library(readr)
+data <- read.delim("./data/train/X_train.txt", sep = " ")
+```
+
+2.  Appropriately labeling the data set created on step 1 with descriptive variable (columns) names (you can assign columns names from the features.txt file).
+
+```{r}
+library(readr)
+```
+
+3.  Extracts only the measurements (columns) on the mean and standard deviation for each measurement from the data set created on step 1 (see features_info.txt and features.txt files to define corresponding columns) to create a new data set (10229 rows, 66 columns).
+
+```{r}
+library(readr)
+```
+
+4.  Merges the training labels data set (train/y_train.txt—7352 rows, 1 column) and the testing labels data set (test/y_test.txt—2947 rows, 1 column) to create one data set (10229 rows, 1 column).
+
+```{r}
+library(readr)
+```
+
+5.  Uses descriptive activity names to name the activities in the data set created on step 4 (string data type with descriptive value should be used instead of numerical).
+
+```{r}
+library(readr)
+```
+
+6.  Merges the data set created on step 3 (10229 rows, 66 columns) and the data set created on step 4 (10229 rows, 1 column) to create one data set (10229 rows, 67 columns).
+
+```{r}
+library(readr)
+```

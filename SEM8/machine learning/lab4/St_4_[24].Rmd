@@ -1,0 +1,77 @@
+---
+title: "St_4_[24]"
+output: html_notebook
+---
+
+# Introduction
+
+The `mtcars` dataset contains information about various attributes of 32 different car models. This analysis aims to investigate the relationship between transmission type and fuel efficiency (mpg), considering other variables as well. We'll start by exploring the dataset and then perform linear regression analysis.
+
+# Dataset Exploration
+
+```{r}
+data(mtcars)
+str(mtcars)
+summary(mtcars)
+cor(mtcars)
+```
+
+The `mtcars` dataset consists of various attributes of 32 car models. We'll focus on exploring the relationship between mpg and transmission type (am), along with other variables.
+
+# Scatterplot Matrix
+
+```{r}
+pairs(~mpg+disp+hp+drat+wt+qsec+vs+am+gear+carb, data=mtcars)
+```
+
+The scatterplot matrix provides a visual examination of potential relationships between variables in the dataset.
+
+# Linear Regression Models
+
+```{r}
+# Simple linear regression model
+model_simple <- lm(mpg ~ am, data = mtcars)
+
+# Multiple linear regression model
+model_multiple <- lm(mpg ~ am + disp + hp + drat + wt + qsec + vs + gear + carb, data = mtcars)
+
+summary(model_simple)
+summary(model_multiple)
+```
+
+The linear regression models help us understand the relationship between transmission type and mpg, considering other variables as well.
+
+# Interpretation
+
+```{r}
+# Extract coefficients
+coefficients_simple <- coef(model_simple)
+coefficients_multiple <- coef(model_multiple)
+
+# Calculate differences in mpg between transmission types
+mpg_difference_simple <- coefficients_simple[2]
+mpg_difference_multiple <- coefficients_multiple['am']
+
+mpg_difference_simple
+mpg_difference_multiple
+```
+
+Based on the analysis:
+
+- The simple linear regression model suggests that manual transmissions have approximately 7.24 mpg higher than automatic transmissions.
+- However, in the multiple linear regression model, the difference in mpg between automatic and manual transmissions decreases to approximately 2.58 mpg.
+- Both models indicate that manual transmissions tend to have higher mpg compared to automatic transmissions, but the exact difference varies depending on whether other variables are considered.
+
+# Conclusion
+
+Manual transmissions appear to be more fuel-efficient in terms of mpg compared to automatic transmissions, as suggested by the analysis performed.
+
+### Model Diagnostics
+
+```{r}
+plot(model_simple)
+```
+
+```{r}
+plot(model_multiple)
+```
